@@ -30,4 +30,3 @@ btnSwitchState(refs.btnStart, refs.btnStop);
 
 refs.btnStart.addEventListener("click", handleStart);
 refs.btnStop.addEventListener("click", handleStop);
-
