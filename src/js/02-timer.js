@@ -22,7 +22,7 @@ const options = {
   onClose: getTimer,
 };
 
- function getTimer (selectedDates) {
+function getTimer (selectedDates) {
         selectedDateValue = selectedDates[0].valueOf();
         if (selectedDateValue <= Date.now()) {
             Report.failure('Selected Past Time', 'Please choose a date in the future', 'Close');
@@ -52,11 +52,12 @@ function convertMs(ms) {
 }
 
 function handleStart() {
-    changeInputState(refs.btnStart, "disable");
-    changeInputState(refs.dateTime, "disable");
     if (selectedDateValue <= Date.now()) {
         Report.warning('No more time to Countdown', 'Please again choose a date in the future', 'Close');
+        return;
     };    
+    changeInputState(refs.btnStart, "disable");
+    changeInputState(refs.dateTime, "disable");    
     showTime();
     timerId = setInterval(showTime, 1000);
 }
