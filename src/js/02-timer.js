@@ -1,6 +1,6 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 const refs = {
     btnStart: document.querySelector("[data-start]"),
@@ -19,16 +19,18 @@ const options = {
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-    onClose(selectedDates) {
+  onClose: getTimer,
+};
+
+ function getTimer (selectedDates) {
         selectedDateValue = selectedDates[0].valueOf();
-        if (selectedDateValue <= new Date().valueOf()) {
-            Notify.failure('Please choose a date in the future');
+        if (selectedDateValue <= Date.now()) {
+            Report.failure('Selected Past Time', 'Please choose a date in the future', 'Close');
             changeInputState(refs.btnStart, "disable");
             return;
         };
         changeInputState(refs.btnStart, "enable");
-  },
-};
+  }
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -52,6 +54,9 @@ function convertMs(ms) {
 function handleStart() {
     changeInputState(refs.btnStart, "disable");
     changeInputState(refs.dateTime, "disable");
+    if (selectedDateValue <= Date.now()) {
+        Report.warning('No more time to Countdown', 'Please again choose a date in the future', 'Close');
+    };    
     showTime();
     timerId = setInterval(showTime, 1000);
 }
@@ -61,7 +66,7 @@ function addLeadingZero(val) {
 }
 
 function showTime() {
-    const timerValue = selectedDateValue - new Date().valueOf();
+    const timerValue = selectedDateValue - Date.now();
     if (timerValue > 0) {
         const time = convertMs(timerValue);
         refs.fieldDays.textContent = addLeadingZero(time.days);
@@ -72,7 +77,7 @@ function showTime() {
         clearInterval(timerId);
         changeInputState(refs.btnStart, "enable");
         changeInputState(refs.dateTime, "enable");
-        Notify.success('Countdown finished');
+        Report.success('Countdown finished', 'Have a Nice Day', 'Thanks');
     }
 }
 
