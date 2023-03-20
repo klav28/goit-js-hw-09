@@ -5,19 +5,16 @@ const refs = {
 };
 
 function createPromise(position, delay) {
-  const promise = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const shouldResolve = Math.random() > 0.3;
     setTimeout(() => {
       if (shouldResolve) {
-        resolve(`SUCCESS No ${position} in ${delay} ms`);
+        resolve({ position, delay });
       } else {
-        reject(`REJECT No ${position} in ${delay} ms`);
+        reject({ position, delay });
       }
     }, delay);
   });
-  return promise
-    .then((value) => Notify.success(value))
-    .catch((error) => Notify.failure(error));
 }
 
 function handleSubmit(ev) {
@@ -29,26 +26,11 @@ function handleSubmit(ev) {
   let currentDelay = Number(delay.value);
   
   for (let count = 1; count <= amount.value; count += 1) {
-    createPromise(count, currentDelay);
+    createPromise(count, currentDelay)
+      .then(({ position, delay }) => Notify.success(`SUCCESS No ${position} in ${delay} ms`))
+      .catch(({ position, delay }) => Notify.failure(`REJECT No ${position} in ${delay} ms`));;
     currentDelay += Number(step.value);
   }
 }
-
-// const myPromise = new Promise((resolve, reject) => {
-//   setTimeout(() => {
-//     const shouldResolve = Math.random() > 0.3;
-//     if (shouldResolve) {
-//       resolve("Success!!!!");
-//     } else {
-//       reject("ERROR!!");
-//     }
-//   }, 1000);
-// })
-
-// myPromise.then(value => {
-//   console.log(value)
-// }).catch(error => {
-//   console.log(error)
-// });
 
 refs.formData.addEventListener("submit", handleSubmit);
